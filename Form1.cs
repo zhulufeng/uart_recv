@@ -82,27 +82,30 @@ namespace uart_recv
             dataRate = Convert.ToInt32(textBox_dataFreq.Text);
             reciveData.receive_count = 0;
             reciveData.count   = 0;
-            reciveData.ax      = 0;
-            reciveData.ay      = 0;
-            reciveData.az      = 0;
-            reciveData.wx      = 0;
-            reciveData.wy      = 0;
-            reciveData.wz      = 0;
-            reciveData.a_tem   = 0;
-            reciveData.wx_tem  = 0;
-            reciveData.wy_tem  = 0;
-            reciveData.wz_tem  = 0;
+            for (int i = 0; i < 4; i++)
+            {
+                reciveData.ax[i] = 0;
+                reciveData.ay[i] = 0;
+                reciveData.az[i] = 0;
+                reciveData.wx[i] = 0;
+                reciveData.wy[i] = 0;
+                reciveData.wz[i] = 0;
+                reciveData.a_tem  [i]= 0;
+                reciveData.wx_tem [i]= 0;
+                reciveData.wy_tem [i]= 0;
+                reciveData.wz_tem [i]= 0;
 
-            reciveData.ax_1s     = 0;
-            reciveData.ay_1s     = 0;
-            reciveData.az_1s     = 0;
-            reciveData.wx_1s     = 0;
-            reciveData.wy_1s     = 0;
-            reciveData.wz_1s     = 0;
-            reciveData.a_tem_1s  = 0;
-            reciveData.wx_tem_1s = 0;
-            reciveData.wy_tem_1s = 0;
-            reciveData.wz_tem_1s = 0;
+                reciveData.ax_1s[i]= 0;
+                reciveData.ay_1s[i]= 0;
+                reciveData.az_1s[i]= 0;
+                reciveData.wx_1s[i]= 0;
+                reciveData.wy_1s[i]= 0;
+                reciveData.wz_1s[i]= 0;
+                reciveData.a_tem_1s[i] = 0;
+                reciveData.wx_tem_1s[i] = 0;
+                reciveData.wy_tem_1s[i] = 0;
+                reciveData.wz_tem_1s[i] = 0;
+            }
 
 
             reciveData.num = 0;
@@ -223,30 +226,56 @@ namespace uart_recv
 
 
 
-            while (serialData.buffer.Count >= 77)
+            while (serialData.buffer.Count >= 86)
             {
                 if (serialData.buffer[0] == 0x55 && serialData.buffer[1] == 0xAA)
                 {
                     UInt32 CheckSumA = 0;
                     UInt32 CheckSumB = 0;
 
-                    for (int i = 2; i < 46; i++)
+                    for (int i = 2; i < 85; i++)
                     {
                         CheckSumA += serialData.buffer[i];
                     }
-                    CheckSumB = serialData.buffer[46];
+                    CheckSumB = serialData.buffer[85];
                     if(true) //(CheckSumA & 0xFF) == CheckSumB
                     {
-                        serialData.buffer.CopyTo(0, reciveData.command_receive, 0, 77);
+                        serialData.buffer.CopyTo(0, reciveData.command_receive, 0, 85);
 
                         int startloc = 2;
                         int multiplier = 0;
-                        reciveData.wx    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0 * 180 / 3.14159; multiplier++;
-                        reciveData.wy    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0 * 180 / 3.14159; multiplier++;
-                        reciveData.wz    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0 * 180 / 3.14159; multiplier++;
-                        reciveData.ax    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
-                        reciveData.ay    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
-                        reciveData.az    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
+                        for(int i = 0;i < 4; i++)
+                        {
+                            reciveData.ax[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i     ] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  +  1]) / 65536.0; 
+                            reciveData.ay[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i +  2] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  +  3]) / 65536.0;
+                            reciveData.az[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i +  4] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  +  5]) / 65536.0;
+                            reciveData.wx[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i +  6] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  +  7]) / 65536.0;
+                            reciveData.wy[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i +  8] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  +  9]) / 65536.0;
+                            reciveData.wz[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i + 10] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  + 11]) / 65536.0;
+                            reciveData.a_tem[i] = (256 * 256 * 256 * reciveData.command_receive[startloc + 14 * i + 12] + 256 * 256 * reciveData.command_receive[startloc + 14 * i  + 13]) / 65536.0;
+                        }
+                        reciveData.ave_ax = (256 * 256 * 256 * reciveData.command_receive[58] + 256 * 256 * reciveData.command_receive[59]) / 65536.0;
+                        reciveData.ave_ay = (256 * 256 * 256 * reciveData.command_receive[60] + 256 * 256 * reciveData.command_receive[61]) / 65536.0;
+                        reciveData.ave_az = (256 * 256 * 256 * reciveData.command_receive[62] + 256 * 256 * reciveData.command_receive[63]) / 65536.0;
+                        reciveData.ave_wx = (256 * 256 * 256 * reciveData.command_receive[64] + 256 * 256 * reciveData.command_receive[65]) / 65536.0;
+                        reciveData.ave_wy = (256 * 256 * 256 * reciveData.command_receive[66] + 256 * 256 * reciveData.command_receive[67]) / 65536.0;
+                        reciveData.ave_wz = (256 * 256 * 256 * reciveData.command_receive[68] + 256 * 256 * reciveData.command_receive[69]) / 65536.0;
+                        reciveData.ave_tem = (256 * 256 * 256 * reciveData.command_receive[70] + 256 * 256 * reciveData.command_receive[71]) / 65536.0;
+
+                        reciveData.Mag_x = (256 * 256 * 256 * reciveData.command_receive[72] + 256 * 256 * reciveData.command_receive[73]) / 65536.0;
+                        reciveData.Mag_y = (256 * 256 * 256 * reciveData.command_receive[74] + 256 * 256 * reciveData.command_receive[75]) / 65536.0;
+                        reciveData.Mag_z = (256 * 256 * 256 * reciveData.command_receive[76] + 256 * 256 * reciveData.command_receive[77]) / 65536.0;
+                        reciveData.Mag_tem = (256 * 256 * 256 * reciveData.command_receive[78] + 256 * 256 * reciveData.command_receive[79]) / 65536.0;
+
+                        reciveData.baro = (256 * 256 * 256 * reciveData.command_receive[80] + 256 * 256 * reciveData.command_receive[81]) / 65536.0;
+                        reciveData.baro_tem = (256 * 256 * 256 * reciveData.command_receive[82] + 256 * 256 * reciveData.command_receive[83]) / 65536.0;
+
+//                         reciveData.wx    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0 * 180 / 3.14159; multiplier++;
+//                         reciveData.wy    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0 * 180 / 3.14159; multiplier++;
+//                         reciveData.wz    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0 * 180 / 3.14159; multiplier++;
+//                         reciveData.ax    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
+//                         reciveData.ay    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
+//                         reciveData.az    = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
                         reciveData.lat   = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
                         reciveData.lon   = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
                         reciveData.alt   = (256 * 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 3] + 256 * 256 * reciveData.command_receive[startloc + 4 * multiplier + 2] + 256 * reciveData.command_receive[startloc + 4 * multiplier + 1] + reciveData.command_receive[startloc + 4 * multiplier + 0]) / 2097152.0; multiplier++;
@@ -267,41 +296,96 @@ namespace uart_recv
                         reciveData.receive_count++;
                         if (reciveData.receive_count > 2)
                         {
-                            reciveData.ax_1s     = reciveData.ax_1s     + reciveData.ax    ;
-                            reciveData.ay_1s     = reciveData.ay_1s     + reciveData.ay    ;
-                            reciveData.az_1s     = reciveData.az_1s     + reciveData.az    ;
-                            reciveData.a_tem_1s  = reciveData.a_tem_1s  + reciveData.a_tem ;
-                            reciveData.wx_1s     = reciveData.wx_1s     + reciveData.wx    ;
-                            reciveData.wy_1s     = reciveData.wy_1s     + reciveData.wy    ;
-                            reciveData.wz_1s     = reciveData.wz_1s     + reciveData.wz    ;
-                            reciveData.wx_tem_1s = reciveData.wx_tem_1s + reciveData.wx_tem;
-                            reciveData.wy_tem_1s = reciveData.wy_tem_1s + reciveData.wy_tem;
-                            reciveData.wz_tem_1s = reciveData.wz_tem_1s + reciveData.wz_tem;
+                            for (int i = 0; i < 4; i++)
+                            {
+                                reciveData.ax_1s[i] = reciveData.ax_1s[i] + reciveData.ax[i];
+                                reciveData.ay_1s[i] = reciveData.ay_1s[i] + reciveData.ay[i];
+                                reciveData.az_1s[i] = reciveData.az_1s[i] + reciveData.az[i];
+                                reciveData.a_tem_1s[i] = reciveData.a_tem_1s[i] + reciveData.a_tem[i];
+                                reciveData.wx_1s[i] = reciveData.wx_1s[i] + reciveData.wx[i];
+                                reciveData.wy_1s[i] = reciveData.wy_1s[i] + reciveData.wy[i];
+                                reciveData.wz_1s[i] = reciveData.wz_1s[i] + reciveData.wz[i];
+                                reciveData.wx_tem_1s[i] = reciveData.wx_tem_1s[i] + reciveData.wx_tem[i];
+                                reciveData.wy_tem_1s[i] = reciveData.wy_tem_1s[i] + reciveData.wy_tem[i];
+                                reciveData.wz_tem_1s[i] = reciveData.wz_tem_1s[i] + reciveData.wz_tem[i];
+                            }   
+                            reciveData.ave_ax_1s = reciveData.ave_ax_1s + reciveData.ave_ax;
+                            reciveData.ave_ay_1s = reciveData.ave_ay_1s + reciveData.ave_ay;
+                            reciveData.ave_az_1s = reciveData.ave_az_1s + reciveData.ave_az;
+                            reciveData.ave_wx_1s = reciveData.ave_wx_1s + reciveData.ave_wx;
+                            reciveData.ave_wy_1s = reciveData.ave_wy_1s + reciveData.ave_wy;
+                            reciveData.ave_wz_1s = reciveData.ave_wz_1s + reciveData.ave_wz;
+                            reciveData.ave_tem_1s = reciveData.ave_tem_1s + reciveData.ave_tem;
+                            reciveData.Mag_x_1s = reciveData.Mag_x_1s + reciveData.Mag_x;
+                            reciveData.Mag_y_1s = reciveData.Mag_y_1s + reciveData.Mag_y;
+                            reciveData.Mag_z_1s = reciveData.Mag_z_1s + reciveData.Mag_z;
+                            reciveData.Mag_tem_1s = reciveData.Mag_tem_1s + reciveData.Mag_tem;
+                            reciveData.baro_1s = reciveData.baro_1s + reciveData.baro;
+                            reciveData.baro_tem_1s = reciveData.baro_tem_1s + reciveData.baro_tem;
+                                                           
+
+//                             reciveData.ax_1s     = reciveData.ax_1s     + reciveData.ax    ;
+//                             reciveData.ay_1s     = reciveData.ay_1s     + reciveData.ay    ;
+//                             reciveData.az_1s     = reciveData.az_1s     + reciveData.az    ;
+//                             reciveData.a_tem_1s  = reciveData.a_tem_1s  + reciveData.a_tem ;
+//                             reciveData.wx_1s     = reciveData.wx_1s     + reciveData.wx    ;
+//                             reciveData.wy_1s     = reciveData.wy_1s     + reciveData.wy    ;
+//                             reciveData.wz_1s     = reciveData.wz_1s     + reciveData.wz    ;
+//                             reciveData.wx_tem_1s = reciveData.wx_tem_1s + reciveData.wx_tem;
+//                             reciveData.wy_tem_1s = reciveData.wy_tem_1s + reciveData.wy_tem;
+//                             reciveData.wz_tem_1s = reciveData.wz_tem_1s + reciveData.wz_tem;
 
 
 
                             if (sw_data != null)
                             {
                                 StringBuilder dataString = new StringBuilder(); //写入文件
-                                dataString.Append(System.Convert.ToString(reciveData.receive_count));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wx           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wy           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wz           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.ax           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.ay           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.az           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.lat          ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.lon          ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.alt          ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.vx           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.vy           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.vz           ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.pitch        ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.roll         ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.yaw          ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.exint        ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.eyint        ));       dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.ezint        ));       dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.receive_count));
+                                for (int i = 0; i < 4; i++)
+                                {
+
+                                    dataString.Append(System.Convert.ToString(reciveData.wx[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.wy[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.wz[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.ax[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.ay[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.az[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.a_tem[i])); dataString.Append("    ");
+                                    
+                                }
+                                dataString.Append(System.Convert.ToString(reciveData.ave_ax)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_ay)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_az)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_wx)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_wy)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_wz)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_tem)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_x)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_y)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_z)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_tem)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.baro)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.baro_tem)); dataString.Append("    ");
+
+//                                 dataString.Append(System.Convert.ToString(reciveData.receive_count));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wx           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wy           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wz           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.ax           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.ay           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.az           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.lat          ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.lon          ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.alt          ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.vx           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.vy           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.vz           ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.pitch        ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.roll         ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.yaw          ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.exint        ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.eyint        ));       dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.ezint        ));       dataString.Append("    ");
                                 
                                 dataString.Append(System.Convert.ToString(reciveData.count        ));
 
@@ -325,78 +409,135 @@ namespace uart_recv
                         {
                             // 每1s显示数据、保存1s累加数据(温度求均值)
                             reciveData.num++;     // 时间（s）
-
-                            reciveData.ax_1s     = reciveData.ax_1s     / dataRate;
-                            reciveData.ay_1s     = reciveData.ay_1s     / dataRate;
-                            reciveData.az_1s     = reciveData.az_1s     / dataRate;
-                            reciveData.a_tem_1s  = reciveData.a_tem_1s  / dataRate;
-                            reciveData.wx_1s     = reciveData.wx_1s     / dataRate;
-                            reciveData.wy_1s     = reciveData.wy_1s     / dataRate;
-                            reciveData.wz_1s     = reciveData.wz_1s     / dataRate;
-                            reciveData.wx_tem_1s = reciveData.wx_tem_1s / dataRate;
-                            reciveData.wy_tem_1s = reciveData.wy_tem_1s / dataRate;
-                            reciveData.wz_tem_1s = reciveData.wz_tem_1s / dataRate;
-
-
+                            for (int i = 0;i<4;i++)
+                            {
+                                reciveData.ax_1s[i]= reciveData.ax_1s[i] / dataRate;
+                                reciveData.ay_1s[i]= reciveData.ay_1s[i] / dataRate;
+                                reciveData.az_1s[i]= reciveData.az_1s[i] / dataRate;
+                                reciveData.a_tem_1s[i] = reciveData.a_tem_1s[i] / dataRate;
+                                reciveData.wx_1s[i] = reciveData.wx_1s[i] / dataRate;
+                                reciveData.wy_1s[i] = reciveData.wy_1s[i] / dataRate;
+                                reciveData.wz_1s[i] = reciveData.wz_1s[i] / dataRate;
+                                reciveData.wx_tem_1s[i] = reciveData.wx_tem_1s[i] / dataRate;
+                                reciveData.wy_tem_1s[i] = reciveData.wy_tem_1s[i] / dataRate;
+                                reciveData.wz_tem_1s[i] = reciveData.wz_tem_1s[i] / dataRate;
+                            }
+                            reciveData.ave_ax_1s = reciveData.ave_ax_1s / dataRate;
+                            reciveData.ave_ay_1s = reciveData.ave_ay_1s / dataRate;
+                            reciveData.ave_az_1s = reciveData.ave_az_1s / dataRate;
+                            reciveData.ave_wx_1s = reciveData.ave_wx_1s / dataRate;
+                            reciveData.ave_wy_1s = reciveData.ave_wy_1s / dataRate;
+                            reciveData.ave_wz_1s = reciveData.ave_wz_1s / dataRate;
+                            reciveData.ave_tem_1s = reciveData.ave_tem_1s / dataRate;
+                            reciveData.Mag_x_1s = reciveData.Mag_x_1s / dataRate;
+                            reciveData.Mag_y_1s = reciveData.Mag_y_1s / dataRate;
+                            reciveData.Mag_z_1s = reciveData.Mag_z_1s / dataRate;
+                            reciveData.Mag_tem_1s = reciveData.Mag_tem_1s / dataRate;
+                            reciveData.baro_1s = reciveData.baro_1s / dataRate;
+                            reciveData.baro_tem_1s = reciveData.baro_tem_1s / dataRate;
 
                             int num = reciveData.num;
 
-                            double ax_1s     = reciveData.ax_1s    ;
-                            double ay_1s     = reciveData.ay_1s    ;
-                            double az_1s     = reciveData.az_1s    ;
-                            double a_tem_1s  = reciveData.a_tem_1s ;
-                            double wx_1s     = reciveData.wx_1s    ;
-                            double wy_1s     = reciveData.wy_1s    ;
-                            double wz_1s     = reciveData.wz_1s    ;
-                            double wx_tem_1s = reciveData.wx_tem_1s;
-                            double wy_tem_1s = reciveData.wy_tem_1s;
-                            double wz_tem_1s = reciveData.wz_tem_1s;
-
-
-
+                            double ax_1s     = reciveData.ave_ax_1s;
+                            double ay_1s     = reciveData.ave_ay_1s;
+                            double az_1s     = reciveData.ave_az_1s    ;
+                            double a_tem_1s  = reciveData.ave_tem_1s ;
+                            double wx_1s     = reciveData.ave_wx_1s    ;
+                            double wy_1s     = reciveData.ave_wy_1s;
+                            double wz_1s     = reciveData.ave_wz_1s;
+                            double Mag_x_1s  = reciveData.Mag_x_1s;
+                            double Mag_y_1s  = reciveData.Mag_y_1s;
+                            double Mag_z_1s  = reciveData.Mag_z_1s;
+                            double Mag_tem_1s = reciveData.Mag_tem_1s;
+                            double baro_1s = reciveData.baro_1s;
+                            double baro_tem_1s = reciveData.baro_tem_1s;
 
 
                             if (sw_data1s != null)
                             {
                                 StringBuilder dataString = new StringBuilder(); //写入文件
-                                dataString.Append(System.Convert.ToString(reciveData.num));       dataString.Append("    ");
 
-                                dataString.Append(System.Convert.ToString(reciveData.ax_1s    )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.ay_1s    )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.az_1s    )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.a_tem_1s )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wx_1s    )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wy_1s    )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wz_1s    )); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wx_tem_1s)); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wy_tem_1s)); dataString.Append("    ");
-                                dataString.Append(System.Convert.ToString(reciveData.wz_tem_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.receive_count));
+                                for (int i = 0; i < 4; i++)
+                                {
+
+                                    dataString.Append(System.Convert.ToString(reciveData.wx_1s[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.wy_1s[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.wz_1s[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.ax_1s[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.ay_1s[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.az_1s[i])); dataString.Append("    ");
+                                    dataString.Append(System.Convert.ToString(reciveData.a_tem_1s[i])); dataString.Append("    ");
+
+                                }
+                                dataString.Append(System.Convert.ToString(reciveData.ave_ax_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_ay_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_az_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_wx_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_wy_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_wz_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.ave_tem_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_x_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_y_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_z_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.Mag_tem_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.baro_1s)); dataString.Append("    ");
+                                dataString.Append(System.Convert.ToString(reciveData.baro_tem_1s)); dataString.Append("    ");
+                               // dataString.Append(System.Convert.ToString(reciveData.count));
+//                                 dataString.Append(System.Convert.ToString(reciveData.num));       dataString.Append("    ");
+// 
+//                                 dataString.Append(System.Convert.ToString(reciveData.ax_1s    )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.ay_1s    )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.az_1s    )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.a_tem_1s )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wx_1s    )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wy_1s    )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wz_1s    )); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wx_tem_1s)); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wy_tem_1s)); dataString.Append("    ");
+//                                 dataString.Append(System.Convert.ToString(reciveData.wz_tem_1s)); dataString.Append("    ");
 
                                 SaveData(sw_data1s, dataString);
 
                             }
-                            reciveData.ax_1s     = 0;
-                            reciveData.ay_1s     = 0;
-                            reciveData.az_1s     = 0;
-                            reciveData.a_tem_1s  = 0;
-                            reciveData.wx_1s     = 0;
-                            reciveData.wy_1s     = 0;
-                            reciveData.wz_1s     = 0;
-                            reciveData.wx_tem_1s = 0;
-                            reciveData.wy_tem_1s = 0;
-                            reciveData.wz_tem_1s = 0;
+                            for (int i = 0; i < 4; i++)
+                            {
+                                reciveData.ax_1s[i] = 0;
+                                reciveData.ay_1s[i] = 0;
+                                reciveData.az_1s[i] = 0;
+                                reciveData.a_tem_1s[i] = 0;
+                                reciveData.wx_1s[i] = 0;
+                                reciveData.wy_1s[i] = 0;
+                                reciveData.wz_1s[i] = 0;
+                                reciveData.wx_tem_1s[i] = 0;
+                                reciveData.wy_tem_1s[i] = 0;
+                                reciveData.wz_tem_1s[i] = 0;
+                            }
 
+                            reciveData.ave_ax_1s = 0;
+                            reciveData.ave_ay_1s = 0;
+                            reciveData.ave_az_1s = 0;
+                            reciveData.ave_wx_1s = 0;
+                            reciveData.ave_wy_1s = 0;
+                            reciveData.ave_wz_1s = 0;
+                            reciveData.ave_tem_1s =0;
+                            reciveData.Mag_x_1s = 0;
+                            reciveData.Mag_y_1s = 0;
+                            reciveData.Mag_z_1s = 0;
+                            reciveData.Mag_tem_1s = 0;
+                            reciveData.baro_1s =0;
+                            reciveData.baro_tem_1s = 0;
 
                             this.BeginInvoke(updateTableFrmdata, false, num, ax_1s, ay_1s, az_1s, wx_1s, wy_1s, wz_1s, reciveData.lat, reciveData.lon, reciveData.alt, reciveData.pitch, reciveData.roll, reciveData.yaw, "");  //
 
 
                         }
-                        serialData.buffer.RemoveRange(0, 65);
+                        serialData.buffer.RemoveRange(0, 85);
                     }
                     else
                     {
                         // 如果校验和不对，移去一整段
-                        serialData.buffer.RemoveRange(0, 65);
+                        serialData.buffer.RemoveRange(0, 85);
                     }
                 }
                 else//如果帧头不对，移去一个字节

@@ -37,16 +37,48 @@ namespace uart_recv
         public int receive_count;       // 实际接收到的帧计数
         public int count;               // 数据包中的帧计数
 
-        public double ax     ;     public double ax_1s     ;
-        public double ay     ;     public double ay_1s     ;
-        public double az     ;     public double az_1s     ;
-        public double wx     ;     public double wx_1s     ;
-        public double wy     ;     public double wy_1s     ;
-        public double wz     ;     public double wz_1s     ;
-        public double a_tem  ;     public double a_tem_1s  ;
-        public double wx_tem ;     public double wx_tem_1s ;
-        public double wy_tem ;     public double wy_tem_1s ;
-        public double wz_tem ;     public double wz_tem_1s ;
+        public double [] ax     = new double[4];     public double [] ax_1s     = new double[4];
+        public double [] ay     = new double[4];     public double [] ay_1s     = new double[4];
+        public double [] az     = new double[4];     public double [] az_1s     = new double[4];
+        public double [] wx     = new double[4];     public double [] wx_1s     = new double[4];
+        public double [] wy     = new double[4];     public double [] wy_1s     = new double[4];
+        public double [] wz     = new double[4];     public double [] wz_1s     = new double[4];
+        public double [] a_tem  = new double[4];     public double [] a_tem_1s  = new double[4];
+        public double [] wx_tem = new double[4];     public double [] wx_tem_1s = new double[4];
+        public double [] wy_tem = new double[4];     public double [] wy_tem_1s = new double[4];
+        public double [] wz_tem = new double[4];     public double [] wz_tem_1s = new double[4];
+
+        public double ave_ax;
+        public double ave_ay;
+        public double ave_az;
+        public double ave_wx;
+        public double ave_wy;
+        public double ave_wz;
+        public double ave_tem;
+
+        public double ave_ax_1s;
+        public double ave_ay_1s;
+        public double ave_az_1s;
+        public double ave_wx_1s;
+        public double ave_wy_1s;
+        public double ave_wz_1s;
+        public double ave_tem_1s;
+        //磁力计
+        public double Mag_x;
+        public double Mag_y;
+        public double Mag_z;
+        public double Mag_tem;
+
+        public double Mag_x_1s;
+        public double Mag_y_1s;
+        public double Mag_z_1s;
+        public double Mag_tem_1s;
+        //气压计
+        public double baro;
+        public double baro_tem;
+
+        public double baro_1s;
+        public double baro_tem_1s;
 
         public double lat    ;
         public double lon    ;
@@ -57,6 +89,7 @@ namespace uart_recv
         public double vx     ;
         public double vy     ;
         public double vz     ;
+
 
         public double exint;
         public double eyint;
